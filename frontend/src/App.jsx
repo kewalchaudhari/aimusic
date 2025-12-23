@@ -555,7 +555,7 @@ function App() {
                 {/* Glowing Border Wrapper */}
                 <div className="relative p-1 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_40px_rgba(79,70,229,0.3)]">
                   <div className="bg-white p-2 rounded-xl">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusic.netlify.app/word-submit.html&color=4f46e5" alt="QR Code" className="w-full h-auto block rounded-lg" />
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusicbond.netlify.app/word-submit.html&color=4f46e5" alt="QR Code" className="w-full h-auto block rounded-lg" />
                   </div>
                 </div>
               </div>
