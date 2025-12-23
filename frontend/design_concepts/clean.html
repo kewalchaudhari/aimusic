@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JioAiMusic - Clean</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 p-6 hidden md:block">
+        <div class="flex items-center gap-2 mb-10">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg"></div>
+            <span class="text-xl font-bold tracking-tight text-slate-900">JioAiMusic</span>
+        </div>
+
+        <nav class="space-y-1">
+            <a href="#" class="block px-4 py-3 bg-slate-100 text-blue-600 rounded-lg font-semibold">Generate</a>
+            <a href="#"
+                class="block px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-medium transition">All
+                Songs</a>
+            <a href="#"
+                class="block px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-medium transition">Playlists</a>
+            <a href="#"
+                class="block px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg font-medium transition">Settings</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-extrabold text-slate-900">New Project</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-slate-500">Credits: <span
+                        class="text-slate-900">1,200</span></span>
+                <div class="w-10 h-10 bg-slate-200 rounded-full border border-white shadow-sm"></div>
+            </div>
+        </header>
+
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Describe your song</label>
+                    <textarea
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 placeholder-slate-400 focus:outline-none input-focus h-32 resize-none text-lg"
+                        placeholder="e.g. An upbeat pop song about coding until sunrise..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Style / Genre</label>
+                        <select
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none input-focus">
+                            <option>Pop</option>
+                            <option>Rock</option>
+                            <option>Indie</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Options</label>
+                        <div class="flex items-center gap-4 mt-3">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox"
+                                    class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                                <span class="text-slate-600">Instrumental</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox"
+                                    class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500" checked>
+                                <span class="text-slate-600">High Quality</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full btn-gradient text-white font-bold py-4 rounded-xl text-lg shadow-lg">
+                    Create Masterpiece
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-slate-900">Your recent generations</h2>
+                <a href="#" class="text-blue-600 text-sm font-medium hover:underline">View all</a>
+            </div>
+
+            <div class="space-y-4">
+                <!-- List Item -->
+                <div
+                    class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between hover:border-blue-300 transition cursor-pointer group">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800">Summer Vibes 2024</h3>
+                            <p class="text-sm text-slate-500">Pop • Just now</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Ready</span>
+                        <button class="text-slate-400 hover:text-blue-600">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List Item -->
+                <div
+                    class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between hover:border-blue-300 transition cursor-pointer group">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500 transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800">Melancholy Rain</h3>
+                            <p class="text-sm text-slate-500">Lo-Fi • 5 min ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Ready</span>
+                        <button class="text-slate-400 hover:text-blue-600">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

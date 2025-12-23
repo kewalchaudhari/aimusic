@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Clear Words</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background: #1a1a1a;
+            color: white;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #dc2626;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Clear Words Function</h1>
+    <button onclick="clearWords()">🗑️ Clear All Words</button>
+    <button onclick="checkWords()">📋 Check Words</button>
+    <div id="result"></div>
+
+    <script>
+        function clearWords() {
+            console.log('Clearing words...');
+            fetch('https://my-suno-backend.onrender.com/api/words', {
+                method: 'DELETE'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Clear response:', data);
+                    document.getElementById('result').innerHTML = `
+                    <strong>Clear Result:</strong><br>
+                    ${JSON.stringify(data, null, 2)}
+                `;
+                    alert('✅ ' + data.message);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = `
+                    <strong style="color: #ef4444;">Error:</strong><br>
+                    ${error.message}
+                `;
+                    alert('❌ Error: ' + error.message);
+                });
+        }
+
+        function checkWords() {
+            console.log('Checking words...');
+            fetch('https://my-suno-backend.onrender.com/api/words')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Words:', data);
+                    document.getElementById('result').innerHTML = `
+                    <strong>Current Words:</strong><br>
+                    Count: ${data.count}<br>
+                    Words: ${JSON.stringify(data.words, null, 2)}
+                `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = `
+                    <strong style="color: #ef4444;">Error:</strong><br>
+                    ${error.message}
+                `;
+                });
+        }
+
+        // Check words on load
+        checkWords();
+    </script>
+</body>
+
+</html>

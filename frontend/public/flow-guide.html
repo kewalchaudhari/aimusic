@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Flow - Visual Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000000;
+            color: white;
+            padding: 3rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .flow-diagram {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .step {
+            background: rgba(20, 20, 20, 0.8);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .step::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -1.5rem;
+            left: 2rem;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+        }
+
+        .step-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .step-files {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .file-tag {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.25rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2rem;
+            color: rgba(99, 102, 241, 0.5);
+            margin: 1rem 0;
+        }
+
+        .quick-start {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .quick-start h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .command {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            margin: 0.5rem 0;
+            border-left: 4px solid #6366f1;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card h3 {
+            color: #a855f7;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommended {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .recommended::after {
+            content: '⭐ RECOMMENDED';
+            display: block;
+            color: #10b981;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎵 Collaborative Song Creation Flow</h1>
+
+        <div class="flow-diagram">
+            <div class="step" data-step="STEP 1">
+                <div class="step-title">📺 Display QR Code (Projector/Screen)</div>
+                <div class="step-description">
+                    Show a QR code on the big screen for all leaders to see. The display updates in real-time as words
+                    are collected.
+                </div>
+                <div class="step-files">
+                    <strong>Choose one:</strong><br>
+                    <span class="file-tag">qr-display-option1.html</span>
+                    <span class="file-tag">qr-display-option2.html</span>
+                    <span class="file-tag">qr-display-option3.html</span>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="step" data-step="STEP 2">
+                <div class="step-title">📱 Leaders Scan QR Code</div>
+                <div class="step-description">
+                    Each leader scans the QR code with their phone and is taken to the word submission page.
+                </div>
+                <div class="step-files">
+                    <strong>Submission page:</strong><br>
+                    <span class="file-tag">word-submit.html</span>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="step" data-step="STEP 3">
+                <div class="step-title">✍️ Submit One Word Each</div>
+                <div class="step-description">
+                    Each leader enters one inspiring word (max 20 characters). Words are instantly sent to the backend
+                    and appear on the main display.
+                </div>
+                <div class="step-files">
+                    <strong>Backend API:</strong><br>
+                    <span class="file-tag">POST /api/submit-word</span>
+                    <span class="file-tag">GET /api/words</span>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="step" data-step="STEP 4">
+                <div class="step-title">🎛️ Admin Reviews & Generates</div>
+                <div class="step-description">
+                    Open the admin dashboard on your laptop. Review all collected words, see statistics, and click
+                    "Generate Song" when ready.
+                </div>
+                <div class="step-files">
+                    <strong>Admin interface:</strong><br>
+                    <span class="file-tag">admin-dashboard.html</span>
+                </div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="step" data-step="STEP 5">
+                <div class="step-title">🎵 Song Generation & Playback</div>
+                <div class="step-description">
+                    The system automatically redirects to your main React app where the AI generates the song using all
+                    collected words. Play it for everyone!
+                </div>
+                <div class="step-files">
+                    <strong>Main app:</strong><br>
+                    <span class="file-tag">http://localhost:5173</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-start">
+            <h2>🚀 Quick Start Guide</h2>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">1. Start the Servers</h3>
+            <div class="command">
+                # Backend (Already running ✓)<br>
+                cd backend && python main.py
+            </div>
+            <div class="command">
+                # Frontend (Already running ✓)<br>
+                cd frontend && npm run dev
+            </div>
+            <div class="command">
+                # HTML Pages Server<br>
+                ./start-collaborative-server.sh
+            </div>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">2. Generate QR Code</h3>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                Create a QR code pointing to: <code
+                    style="background: rgba(0,0,0,0.3); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">http://YOUR_LOCAL_IP:8080/word-submit.html</code>
+            </p>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">3. Choose Your QR Display</h3>
+            <div class="grid-2">
+                <div class="option-card">
+                    <h3>Option 1: Minimalist</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        Clean, centered design with word count. Best for professional settings.
+                    </p>
+                </div>
+                <div class="option-card recommended">
+                    <h3>Option 2: Dynamic Grid</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        Split screen with live word preview and stats. Most engaging!
+                    </p>
+                </div>
+                <div class="option-card">
+                    <h3>Option 3: Immersive</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        Fullscreen with floating QR. Perfect for large venues.
+                    </p>
+                </div>
+                <div class="option-card">
+                    <h3>Admin Dashboard</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        Control panel for managing words and generating the song.
+                    </p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">4. Test the Flow</h3>
+            <ol style="color: rgba(255,255,255,0.7); margin-left: 1.5rem;">
+                <li>Open QR display on one screen</li>
+                <li>Open word-submit.html on your phone</li>
+                <li>Submit a test word</li>
+                <li>Watch it appear on the display</li>
+                <li>Open admin dashboard</li>
+                <li>Click "Generate Song"</li>
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>

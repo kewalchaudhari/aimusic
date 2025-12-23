@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JIO Word Cloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            /* Prevent scrolling for the immersive experience */
+            position: relative;
+        }
+
+        /* Animated Background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+            transition: all 1s ease;
+        }
+
+        .blob-1 {
+            top: -20%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #4f46e5;
+            animation: blob 25s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #db2777;
+            animation: blob 25s infinite alternate-reverse;
+        }
+
+        .blob-3 {
+            top: 40%;
+            left: 40%;
+            width: 40vw;
+            height: 40vw;
+            background: #005AAC;
+            opacity: 0.2;
+            animation: blob 30s infinite alternate;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(30px, 30px) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            flex-grow: 1;
+            /* Ensure it doesn't overflow the page if possible */
+            max-height: calc(100vh - 180px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            z-index: 5;
+        }
+
+        #canvas-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            display: block;
+            /* Border for debugging bounds, remove in prod */
+            /* border: 1px solid rgba(255,255,255,0.1); */
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            from {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            to {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Particle System Script -->
+    <script>
+        const particleCount = 20;
+        for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 4 + 2;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.left = `${Math.random() * 100}vw`;
+            p.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            p.style.animationDelay = `-${Math.random() * 20}s`;
+            document.body.appendChild(p);
+        }
+    </script>
+
+    <div class="container">
+        <div class="header">
+            <h1>Word Cloud</h1>
+            <p class="subtitle">Live visualization from collected words</p>
+        </div>
+
+        <div class="card">
+            <div id="canvas-wrapper">
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <span>Fetching words...</span>
+                </div>
+                <canvas id="cloud-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = 'https://ai-music-backend-g0d9.onrender.com';
+        const MASK_TEXT = "JIO";
+        const REFRESH_INTERVAL = 2000;
+        const FONT_FAMILY = "'Outfit', sans-serif";
+        const COLORS = [
+            '#818cf8', // Indigo 400
+            '#a78bfa', // Violet 400
+            '#c084fc', // Purple 400
+            '#f472b6', // Pink 400
+            '#fb7185', // Rose 400
+            '#ffffff', // White
+            '#e2e8f0', // Slate 200
+        ];
+
+        // State
+        const canvas = document.getElementById('cloud-canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const wrapper = document.getElementById('canvas-wrapper');
+        const loading = document.getElementById('loading');
+        let currentWords = [];
+        let animationFrameId;
+
+        // Resize Handling
+        function updateCanvasSize() {
+            const dpr = window.devicePixelRatio || 1;
+            const w = wrapper.clientWidth;
+            const h = wrapper.clientHeight;
+
+            // Only resize if dimensions changed to prevent jitter
+            if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            return { w, h };
+        }
+
+        // Initialize
+        async function init() {
+            updateCanvasSize();
+            await fetchWords();
+
+            // Auto Refresh
+            setInterval(fetchWords, REFRESH_INTERVAL);
+
+            // Resize Listener
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    updateCanvasSize();
+                    if (currentWords.length > 0) render(currentWords);
+                }, 200);
+            });
+        }
+
+        async function fetchWords() {
+            try {
+                const response = await fetch(`${API_BASE}/api/words`);
+                const data = await response.json();
+                const newWords = data.words || [];
+
+                // Simple equality check to avoid re-rendering if data hasn't changed
+                if (JSON.stringify(newWords.sort()) !== JSON.stringify(currentWords.sort())) {
+                    currentWords = newWords;
+                    render(currentWords);
+                }
+            } catch (error) {
+                console.error('Error fetching words:', error);
+                if (currentWords.length === 0) {
+                    loading.innerHTML = '<span style="color: #ef4444">Failed to load words</span>';
+                }
+            }
+        }
+
+        // Main Render Logic
+        function render(wordsData) {
+            cancelAnimationFrame(animationFrameId); // Stop any ongoing animation
+
+            if (!wordsData || wordsData.length === 0) {
+                loading.style.display = 'flex';
+                loading.querySelector('span').textContent = 'Waiting for words...';
+                return;
+            }
+            loading.style.display = 'none';
+
+            const { w, h } = { w: wrapper.clientWidth, h: wrapper.clientHeight };
+
+            // 1. Process Words Frequency
+            const frequency = {};
+            wordsData.forEach(w => {
+                const normalized = w.trim().toLowerCase();
+                if (normalized) frequency[normalized] = (frequency[normalized] || 0) + 1;
+            });
+
+            // Convert to sorted array
+            const sortedWords = Object.entries(frequency)
+                .map(([text, count]) => ({
+                    text: text.charAt(0).toUpperCase() + text.slice(1), // Capitalize
+                    count
+                }))
+                .sort((a, b) => b.count - a.count);
+
+            // 2. Generate Map of Valid Points (The "JIO" Shape)
+            const validPoints = generateShapePoints(w, h, MASK_TEXT);
+
+            // 3. Place Words into the shape (Pre-calculation)
+            const placements = calculateWordPositions(sortedWords, validPoints, w, h);
+
+            // 4. Animate the Drawing
+            animateFormation(placements, w, h);
+        }
+
+        function generateShapePoints(w, h, text) {
+            // Offscreen canvas for mask
+            const mCanvas = document.createElement('canvas');
+            mCanvas.width = w;
+            mCanvas.height = h;
+            const mCtx = mCanvas.getContext('2d');
+
+            // Draw text
+            mCtx.fillStyle = '#000';
+            mCtx.fillRect(0, 0, w, h);
+            mCtx.fillStyle = '#fff';
+            mCtx.textAlign = 'center';
+            mCtx.textBaseline = 'middle';
+
+            // Maximize font size
+            const fontSize = Math.min(w * 0.9, h * 0.9);
+            mCtx.font = `900 ${fontSize}px ${FONT_FAMILY}`;
+
+            // Check width fit
+            const textMetrics = mCtx.measureText(text);
+            if (textMetrics.width > w) {
+                const scale = w / (textMetrics.width * 1.1);
+                mCtx.font = `900 ${fontSize * scale}px ${FONT_FAMILY}`;
+            }
+
+            mCtx.fillText(text, w / 2, h / 2);
+
+            // Read pixels
+            const idata = mCtx.getImageData(0, 0, w, h).data;
+            const points = [];
+
+            // Grid sampling (faster than every pixel)
+            const step = 4;
+            for (let y = 0; y < h; y += step) {
+                for (let x = 0; x < w; x += step) {
+                    const idx = (y * w + x) * 4;
+                    // If pixel is whiteish
+                    if (idata[idx] > 128) {
+                        points.push({ x, y });
+                    }
+                }
+            }
+
+            // Shuffle points for random distribution
+            for (let i = points.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [points[i], points[j]] = [points[j], points[i]];
+            }
+
+            return points;
+        }
+
+        function calculateWordPositions(wordList, validPoints, w, h) {
+            const placements = [];
+            const placedBoxes = [];
+            const maxAttemptsPerWord = 100;
+
+            // Sizing Logic
+            const maxCount = wordList[0].count;
+            const minCount = wordList[wordList.length - 1].count;
+
+            // We want the words to be quite large to fill the shape visible
+            const minFontSize = Math.max(14, w / 60);
+            const maxFontSize = Math.max(48, w / 10);
+
+            wordList.forEach(item => {
+                // Calculate font size
+                let fontSize = minFontSize;
+                if (maxCount > minCount) {
+                    fontSize = minFontSize + ((item.count - minCount) / (maxCount - minCount)) * (maxFontSize - minFontSize);
+                } else {
+                    fontSize = (minFontSize + maxFontSize) / 2;
+                }
+
+                // Temporary measurement
+                ctx.font = `700 ${fontSize}px ${FONT_FAMILY}`;
+                const metrics = ctx.measureText(item.text);
+                const wordW = metrics.width;
+                const wordH = fontSize * 0.8; // Approximate visual height
+
+                // Try to place at random valid points
+                // We pick points from our shuffled validPoints array
+                // Stride to spread out attempts
+                const stride = Math.max(1, Math.floor(validPoints.length / maxAttemptsPerWord));
+
+                for (let i = 0; i < validPoints.length && i < maxAttemptsPerWord * stride; i += stride) {
+                    const p = validPoints[i];
+
+                    // Center word on point
+                    const x = p.x - wordW / 2;
+                    const y = p.y - wordH / 2;
+
+                    const box = { x, y, w: wordW, h: wordH };
+
+                    // Check collision
+                    if (!checkCollision(box, placedBoxes)) {
+                        placedBoxes.push(box);
+                        placements.push({
+                            text: item.text,
+                            x, y,
+                            fontSize,
+                            color: COLORS[Math.floor(Math.random() * COLORS.length)]
+                        });
+                        break;
+                    }
+                }
+            });
+            return placements;
+        }
+
+        function checkCollision(box, existingBoxes) {
+            for (const b of existingBoxes) {
+                if (box.x < b.x + b.w &&
+                    box.x + box.w > b.x &&
+                    box.y < b.y + b.h &&
+                    box.y + box.h > b.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function animateFormation(placements, w, h) {
+            ctx.clearRect(0, 0, w, h); // Clear for fresh frame
+
+            let index = 0;
+
+            function step() {
+                // Draw a batch of words per frame for "streaming" effect
+                // Speed depends on total words to ensure it finishes in reasonable time
+                const speed = Math.max(1, Math.ceil(placements.length / 60)); // ~1 second formation
+
+                for (let k = 0; k < speed && index < placements.length; k++) {
+                    drawWord(placements[index]);
+                    index++;
+                }
+
+                if (index < placements.length) {
+                    animationFrameId = requestAnimationFrame(step);
+                }
+            }
+
+            step();
+        }
+
+        function drawWord(item) {
+            ctx.fillStyle = item.color;
+            ctx.font = `700 ${item.fontSize}px ${FONT_FAMILY}`;
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 10;
+            // Pop effect (optional, simplified here as direct draw)
+            ctx.fillText(item.text, item.x, item.y + item.fontSize * 0.8);
+            ctx.restore();
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+
+</html>

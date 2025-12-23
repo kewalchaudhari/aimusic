@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Display - Option 1: Minimalist Elegance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            top: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: #4f46e5;
+            animation: blob 25s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: #db2777;
+            animation: blob 25s infinite alternate-reverse;
+        }
+
+        .blob-3 {
+            top: 40%;
+            left: 40%;
+            width: 400px;
+            height: 400px;
+            background: #005AAC;
+            opacity: 0.3;
+            animation: blob 30s infinite alternate;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 800px;
+            padding: 3rem;
+        }
+
+        .header {
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .qr-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2.5rem;
+            padding: 4rem;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .qr-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+
+        .qr-code {
+            width: 320px;
+            height: 320px;
+            background: white;
+            border-radius: 2rem;
+            margin: 0 auto 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .qr-code:hover {
+            transform: scale(1.02);
+        }
+
+        .qr-placeholder {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .instruction {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .word-count {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Share Your Word</h1>
+            <p class="subtitle">Scan the QR code to contribute</p>
+        </div>
+
+        <div class="qr-container">
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusic.netlify.app/word-submit.html&color=000000"
+                    alt="Scan to Submit" style="width: 100%; height: 100%; object-fit: contain; padding: 20px;">
+            </div>
+
+            <p class="instruction pulse">Scan to add your word to the song</p>
+
+            <div class="word-count">
+                <span id="wordCount">0</span> words collected
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Real-time word count update (connect to your backend)
+        function updateWordCount() {
+            // Fetch from your backend API
+            fetch('https://ai-music-backend-g0d9.onrender.com/api/word-count')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('wordCount').textContent = data.count;
+                })
+                .catch(err => console.error(err));
+        }
+
+        // Update every 2 seconds
+        setInterval(updateWordCount, 2000);
+        updateWordCount();
+    </script>
+</body>
+
+</html>

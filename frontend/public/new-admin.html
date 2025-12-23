@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Generate from Collected Words</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            top: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: #4f46e5;
+            animation: blob 25s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: #db2777;
+            animation: blob 25s infinite alternate-reverse;
+        }
+
+        .blob-3 {
+            top: 40%;
+            left: 40%;
+            width: 400px;
+            height: 400px;
+            background: #005AAC;
+            opacity: 0.2;
+            animation: blob 30s infinite alternate;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        .card {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .words-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .word-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            margin: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+        }
+
+        .word-tag:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25));
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .prompt-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            flex: 1;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #canvas-wrapper {
+            width: 100%;
+            height: 340px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container">
+        <div class="main-grid">
+            <!-- Left Side: QR Code -->
+            <div class="card" style="height: fit-content; position: sticky; top: 2rem;">
+                <h2 class="card-title" style="text-align: center; margin-bottom: 1rem;">Join the Session</h2>
+                <div
+                    style="background: white; padding: 1rem; border-radius: 1rem; margin: 0 auto 1.5rem; width: fit-content;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusic.netlify.app/word-submit.html&color=4f46e5"
+                        alt="Scan to Submit" style="display: block; width: 200px; height: 200px;">
+                </div>
+
+                <a href="word-submit.html" target="_blank" class="btn-secondary"
+                    style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; text-align: center; padding: 1rem; border-radius: 1rem;">
+                    <span>🔗</span> Open Link
+                </a>
+            </div>
+
+            <!-- Middle: Word Cloud -->
+            <div class="card">
+                <!-- Title removed as requested previously -->
+                <div id="canvas-wrapper">
+                    <div id="loading" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <span>Waiting for words...</span>
+                    </div>
+                    <canvas id="cloud-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Side: Collected Words Form -->
+            <div class="card">
+                <h2 class="card-title">Collected Words</h2>
+                <div class="words-container" id="wordsContainer">
+                    <div class="empty-state">No words collected yet</div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="refreshWords()">
+                        <span id="refreshIcon">🔄</span> Refresh
+                    </button>
+                    <button class="btn-danger" onclick="clearAllWords()">
+                        🗑️ Clear All
+                    </button>
+                </div>
+
+                <div class="filter-controls"
+                    style="margin-top: 1rem; display: flex; gap: 1.5rem; justify-content: center; align-items: center;">
+                    <label
+                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: rgba(255, 255, 255, 0.8);">
+                        <input type="radio" name="wordFilter" value="all" checked onchange="updateDisplay()"
+                            style="accent-color: #a855f7;">
+                        All Words
+                    </label>
+                    <label
+                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: rgba(255, 255, 255, 0.8);">
+                        <input type="radio" name="wordFilter" value="top10" onchange="updateDisplay()"
+                            style="accent-color: #a855f7;">
+                        Top 10 Words
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button class="btn-primary" onclick="goToGenerateSong()" id="goToGenerateBtn"
+                        style="flex: 1; padding: 1rem;">
+                        🎵 Go to Generate Song
+                    </button>
+
+                    <button class="btn-secondary" onclick="toggleSongConfig()" id="toggleConfigBtn"
+                        style="width: auto; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span>⚙️</span> Advance <span id="configArrow">▼</span>
+                    </button>
+                </div>
+
+                <div id="wordFrequencyContainer"
+                    style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); display: none;">
+                    <h3
+                        style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: rgba(255, 255, 255, 0.8);">
+                        Word Frequency</h3>
+                    <div id="frequencyList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Song Config Section (initially hidden) -->
+        <div class="card" id="songConfigCard" style="display: none; max-width: 800px; margin: 0 auto 2rem;">
+            <h2 class="card-title">Create Personalized Song</h2>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: block; font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Person
+                    Name</label>
+                <input type="text" id="personName" placeholder="e.g., John Doe" value="Anish Bhai"
+                    style="width: 100%; padding: 1rem 1.25rem; font-size: 1.1rem; font-family: 'Outfit', sans-serif; font-weight: 500; background: rgba(0, 0, 0, 0.3); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; color: white; transition: all 0.3s ease;"
+                    onfocus="this.style.borderColor='rgba(99, 102, 241, 0.5)'; this.style.background='rgba(0, 0, 0, 0.5)';"
+                    onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.background='rgba(0, 0, 0, 0.3)';">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: block; font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Occasion</label>
+                <input type="text" id="occasion" placeholder="e.g., Birthday, Retirement, Achievement"
+                    value="Birthday celebration"
+                    style="width: 100%; padding: 1rem 1.25rem; font-size: 1.1rem; font-family: 'Outfit', sans-serif; font-weight: 500; background: rgba(0, 0, 0, 0.3); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; color: white; transition: all 0.3s ease;"
+                    onfocus="this.style.borderColor='rgba(99, 102, 241, 0.5)'; this.style.background='rgba(0, 0, 0, 0.5)';"
+                    onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.background='rgba(0, 0, 0, 0.3)';">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: block; font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Prompt
+                    Preview</label>
+                <div class="prompt-preview" id="promptPreview" style="min-height: 120px;">
+                    Waiting for words...
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width" id="resultSection" style="display: none;">
+            <h2 class="card-title">Generation Result</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://ai-music-backend-g0d9.onrender.com';
+        let currentWords = [];
+
+        // --- Word Cloud Configuration & State ---
+        const MASK_TEXT = "JIO";
+        const FONT_FAMILY = "'Outfit', sans-serif";
+        const COLORS = [
+            '#818cf8', '#a78bfa', '#c084fc', '#f472b6', '#fb7185', '#ffffff', '#e2e8f0'
+        ];
+
+        let canvas, ctx, wrapper, loading;
+        let animationFrameId;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize rendering context
+            canvas = document.getElementById('cloud-canvas');
+            if (canvas) {
+                ctx = canvas.getContext('2d', { willReadFrequently: true });
+                wrapper = document.getElementById('canvas-wrapper');
+                loading = document.getElementById('loading');
+
+                // Initial Resize
+                updateCanvasSize();
+
+                // Handle Resize
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        updateCanvasSize();
+                        if (currentWords.length > 0) renderCloud(currentWords);
+                    }, 200);
+                });
+            }
+
+            // Setup input listeners
+            const personNameInput = document.getElementById('personName');
+            const occasionInput = document.getElementById('occasion');
+
+            if (personNameInput) personNameInput.addEventListener('input', updatePromptPreview);
+            if (occasionInput) occasionInput.addEventListener('input', updatePromptPreview);
+
+            // Start polling
+            refreshWords();
+            setInterval(refreshWords, 2000);
+        });
+
+        async function refreshWords() {
+            try {
+                const response = await fetch(`${API_BASE}/api/words`);
+                const data = await response.json();
+                const newWords = data.words || [];
+
+                // Check if words changed or if it's the first load
+                const wordsChanged = JSON.stringify(newWords.sort()) !== JSON.stringify(currentWords.sort());
+
+                // Always update if we have new data or if we haven't rendered yet
+                if (wordsChanged || (newWords.length > 0 && !animationFrameId)) {
+                    currentWords = newWords;
+                    updateDisplay();
+                }
+            } catch (error) {
+                console.error('Error fetching words:', error);
+            }
+        }
+
+        function updateDisplay() {
+            // Render Word Cloud
+            renderCloud(currentWords);
+
+            // Update prompt preview
+            updatePromptPreview();
+
+            // Update frequency display
+            updateFrequencyDisplay();
+
+            // Update words display with remove buttons
+            updateWordsList();
+        }
+
+        /* --- Word Cloud Logic --- */
+        function updateCanvasSize() {
+            if (!wrapper || !canvas) return;
+            const dpr = window.devicePixelRatio || 1;
+            const w = wrapper.clientWidth;
+            const h = wrapper.clientHeight;
+
+            if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                ctx.scale(dpr, dpr);
+            }
+        }
+
+        function renderCloud(wordsData) {
+            cancelAnimationFrame(animationFrameId);
+
+            if (!ctx) return;
+
+            if (!wordsData || wordsData.length === 0) {
+                if (loading) loading.style.display = 'flex';
+                // Clear canvas
+                if (ctx && wrapper) ctx.clearRect(0, 0, wrapper.clientWidth, wrapper.clientHeight);
+                return;
+            }
+            if (loading) loading.style.display = 'none';
+
+            const w = wrapper.clientWidth;
+            const h = wrapper.clientHeight;
+
+            // 1. Process Logic
+            const frequency = {};
+            wordsData.forEach(w => {
+                const normalized = w.trim().toLowerCase();
+                if (normalized) frequency[normalized] = (frequency[normalized] || 0) + 1;
+            });
+
+            const sortedWords = Object.entries(frequency)
+                .map(([text, count]) => ({
+                    text: text.charAt(0).toUpperCase() + text.slice(1),
+                    count
+                }))
+                .sort((a, b) => b.count - a.count);
+
+            // 2. Generate Shape
+            const validPoints = generateShapePoints(w, h, MASK_TEXT);
+
+            // 3. Place Words
+            const placements = calculateWordPositions(sortedWords, validPoints, w, h);
+
+            // 4. Animate
+            animateFormation(placements, w, h);
+        }
+
+        function generateShapePoints(w, h, text) {
+            // Generate points for the entire rectangular area (with padding)
+            // This creates a "horizontal" or rectangular filled cloud instead of the text shape
+            const points = [];
+            const step = 4;
+            const padding = 20;
+
+            for (let y = padding; y < h - padding; y += step) {
+                for (let x = padding; x < w - padding; x += step) {
+                    points.push({ x, y });
+                }
+            }
+
+            // Shuffle points for random distribution so words scatter naturally
+            for (let i = points.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [points[i], points[j]] = [points[j], points[i]];
+            }
+
+            return points;
+        }
+
+        function calculateWordPositions(wordList, validPoints, w, h) {
+            const placements = [];
+            const placedBoxes = [];
+            const maxAttemptsPerWord = 100;
+
+            if (wordList.length === 0) return [];
+
+            const maxCount = wordList[0].count;
+            const minCount = wordList[wordList.length - 1].count;
+
+            // Adjust sizing for the smaller admin dashboard box
+            const minFontSize = Math.max(12, w / 70);
+            const maxFontSize = Math.max(40, w / 12);
+
+            wordList.forEach(item => {
+                let fontSize = minFontSize;
+                if (maxCount > minCount) {
+                    fontSize = minFontSize + ((item.count - minCount) / (maxCount - minCount)) * (maxFontSize - minFontSize);
+                } else {
+                    fontSize = (minFontSize + maxFontSize) / 2;
+                }
+
+                ctx.font = `700 ${fontSize}px ${FONT_FAMILY}`;
+                const metrics = ctx.measureText(item.text);
+                const wordW = metrics.width;
+                const wordH = fontSize * 0.8;
+
+                const stride = Math.max(1, Math.floor(validPoints.length / maxAttemptsPerWord));
+
+                for (let i = 0; i < validPoints.length && i < maxAttemptsPerWord * stride; i += stride) {
+                    const p = validPoints[i];
+                    const x = p.x - wordW / 2;
+                    const y = p.y - wordH / 2;
+                    const box = { x, y, w: wordW, h: wordH };
+
+                    if (!checkCollision(box, placedBoxes)) {
+                        placedBoxes.push(box);
+                        placements.push({
+                            text: item.text,
+                            x, y,
+                            fontSize,
+                            color: COLORS[Math.floor(Math.random() * COLORS.length)]
+                        });
+                        break;
+                    }
+                }
+            });
+            return placements;
+        }
+
+        function checkCollision(box, existingBoxes) {
+            for (const b of existingBoxes) {
+                if (box.x < b.x + b.w &&
+                    box.x + box.w > b.x &&
+                    box.y < b.y + b.h &&
+                    box.y + box.h > b.y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function animateFormation(placements, w, h) {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, w, h);
+            let index = 0;
+
+            function step() {
+                const speed = Math.max(1, Math.ceil(placements.length / 60));
+                for (let k = 0; k < speed && index < placements.length; k++) {
+                    drawWord(placements[index]);
+                    index++;
+                }
+                if (index < placements.length) {
+                    animationFrameId = requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function drawWord(item) {
+            ctx.fillStyle = item.color;
+            ctx.font = `700 ${item.fontSize}px ${FONT_FAMILY}`;
+            ctx.save();
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 10;
+            ctx.fillText(item.text, item.x, item.y + item.fontSize * 0.8);
+            ctx.restore();
+        }
+
+        /* --- Existing Admin Functions (Refactored) --- */
+
+        function updateWordsList() {
+            const container = document.getElementById('wordsContainer');
+            if (!container) return;
+
+            const filterRadio = document.querySelector('input[name="wordFilter"]:checked');
+            const filterValue = filterRadio ? filterRadio.value : 'all';
+            let displayItems = currentWords.map((word, index) => ({ word, index }));
+
+            if (filterValue === 'top10' && currentWords.length > 0) {
+                const frequency = {};
+                currentWords.forEach(word => {
+                    const normalized = word.toLowerCase();
+                    frequency[normalized] = (frequency[normalized] || 0) + 1;
+                });
+                const top10Words = Object.entries(frequency)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10)
+                    .map(([word]) => word);
+                displayItems = displayItems.filter(item => top10Words.includes(item.word.toLowerCase()));
+            }
+
+            if (displayItems.length === 0) {
+                const msg = (filterValue === 'top10' && currentWords.length > 0)
+                    ? 'No items match top 10 filter'
+                    : 'No words collected yet';
+                container.innerHTML = `<div class="empty-state">${msg}</div>`;
+            } else {
+                container.innerHTML = displayItems.map(item =>
+                    `<span class="word-tag">
+                        ${item.word}
+                        <button onclick="removeWord(${item.index})" style="margin-left: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; padding: 0; line-height: 1;" title="Remove this word">×</button>
+                    </span>`
+                ).join('');
+            }
+        }
+
+        function updateFrequencyDisplay() {
+            const container = document.getElementById('wordFrequencyContainer');
+            const list = document.getElementById('frequencyList');
+
+            if (currentWords.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+
+            // Calculate frequency
+            const frequency = {};
+            currentWords.forEach(word => {
+                const normalized = word.toLowerCase();
+                frequency[normalized] = (frequency[normalized] || 0) + 1;
+            });
+
+            // Sort by count (descending)
+            const sortedWords = Object.entries(frequency).sort((a, b) => b[1] - a[1]);
+
+            list.innerHTML = sortedWords.map(([word, count]) => {
+                const displayWord = word.charAt(0).toUpperCase() + word.slice(1);
+                return `
+                    <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">
+                        <span>${displayWord}</span>
+                        <span style="margin-left: 0.5rem; background: rgba(99, 102, 241, 0.2); color: #a5b4fc; padding: 0.1rem 0.4rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 700;">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePromptPreview() {
+            const promptPreview = document.getElementById('promptPreview');
+            const personName = document.getElementById('personName').value.trim();
+            const occasion = document.getElementById('occasion').value.trim();
+
+            if (currentWords.length === 0) {
+                promptPreview.textContent = 'Waiting for words...';
+                return;
+            }
+
+            const frequency = {};
+            currentWords.forEach(word => {
+                const normalized = word.toLowerCase();
+                frequency[normalized] = (frequency[normalized] || 0) + 1;
+            });
+
+            let sortedUniqueWords = Object.entries(frequency)
+                .sort((a, b) => b[1] - a[1]) // Sort by count desc
+                .map(([word]) => word.charAt(0).toUpperCase() + word.slice(1)); // Capitalize
+
+            const filterRadio = document.querySelector('input[name="wordFilter"]:checked');
+            const filterValue = filterRadio ? filterRadio.value : 'all';
+
+            if (filterValue === 'top10') {
+                sortedUniqueWords = sortedUniqueWords.slice(0, 10);
+            }
+
+            const qualities = sortedUniqueWords.join(', ');
+
+            if (!personName && !occasion) {
+                promptPreview.textContent = `Create a song for a person. Their qualities are: ${qualities}`;
+            } else if (!personName) {
+                promptPreview.textContent = `Create a song for ${occasion}. Their qualities are: ${qualities}`;
+            } else if (!occasion) {
+                promptPreview.textContent = `Create a song for ${personName}. Their qualities are: ${qualities}`;
+            } else {
+                promptPreview.textContent = `Create a song for ${personName} for their ${occasion}. Their qualities are: ${qualities}`;
+            }
+        }
+
+        function removeWord(index) {
+            if (index < 0 || index >= currentWords.length) return;
+            const wordToRemove = currentWords[index];
+            fetch(`${API_BASE}/api/words/${index}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentWords.splice(index, 1);
+                        updateDisplay();
+                        alert(`✅ Removed "${wordToRemove}"`);
+                    } else {
+                        alert('❌ Failed to remove word: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Error: ' + error.message);
+                });
+        }
+
+        function clearAllWords() {
+            fetch(`${API_BASE}/api/words`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentWords = [];
+                        updateDisplay();
+                        alert('✅ All words cleared successfully!');
+                    } else {
+                        alert('❌ Failed to clear words: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('❌ Error: ' + error.message);
+                });
+        }
+
+        function copyPrompt() {
+            const prompt = currentWords.join(' ');
+            navigator.clipboard.writeText(prompt).then(() => {
+                alert('Prompt copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function goToGenerateSong() {
+            if (currentWords.length === 0) {
+                alert('No words collected yet! Please collect some words first.');
+                return;
+            }
+
+            const personName = document.getElementById('personName').value.trim();
+            const occasion = document.getElementById('occasion').value.trim();
+            const frequency = {};
+            currentWords.forEach(word => {
+                const normalized = word.toLowerCase();
+                frequency[normalized] = (frequency[normalized] || 0) + 1;
+            });
+
+            let sortedUniqueWords = Object.entries(frequency)
+                .sort((a, b) => b[1] - a[1])
+                .map(([word]) => word.charAt(0).toUpperCase() + word.slice(1));
+
+            const filterRadio = document.querySelector('input[name="wordFilter"]:checked');
+            const filterValue = filterRadio ? filterRadio.value : 'all';
+
+            if (filterValue === 'top10') {
+                sortedUniqueWords = sortedUniqueWords.slice(0, 10);
+            }
+
+            const qualities = sortedUniqueWords.join(', ');
+
+            let prompt;
+            if (!personName && !occasion) {
+                prompt = `Create a song for a person. Their qualities are: ${qualities}`;
+            } else if (!personName) {
+                prompt = `Create a song for ${occasion}. Their qualities are: ${qualities}`;
+            } else if (!occasion) {
+                prompt = `Create a song for ${personName}. Their qualities are: ${qualities}`;
+            } else {
+                prompt = `Create a song for ${personName} for their ${occasion}. Their qualities are: ${qualities}`;
+            }
+
+            const encodedPrompt = encodeURIComponent(prompt);
+            window.location.href = `/?prompt=${encodedPrompt}`;
+        }
+
+        function toggleSongConfig() {
+            const card = document.getElementById('songConfigCard');
+            const arrow = document.getElementById('configArrow');
+
+            if (card.style.display === 'none') {
+                card.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                card.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</body>
+
+</html>

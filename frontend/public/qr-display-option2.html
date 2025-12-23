@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Display - Option 2: Dynamic Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            /* Mobile viewport height fix */
+            min-height: -webkit-fill-available;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            top: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: #4f46e5;
+            animation: blob 25s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: #db2777;
+            animation: blob 25s infinite alternate-reverse;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .left-section {
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .description {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            flex: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .qr-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2.5rem;
+            padding: 3rem;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.7),
+                inset 0 0 30px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .qr-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 50px 90px -20px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(255, 255, 255, 0.08);
+        }
+
+        .qr-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .qr-code {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 1/1;
+            height: auto;
+            background: white;
+            border-radius: 2rem;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .qr-code:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .qr-placeholder {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .scan-text {
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .words-preview {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .word-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            margin: 0.25rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 968px) {
+            body {
+                height: auto;
+                padding: 2rem 0;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+                padding: 1rem;
+            }
+
+            .left-section {
+                text-align: center;
+                order: 2;
+                /* Put text below QR on mobile if desired, or keep as is. Let's keep text on top/left first usually. */
+            }
+
+            /* Actually, usually QR is better below intro content on mobile. Let's stick to default order (left section first) */
+
+            h1 {
+                font-size: clamp(3rem, 8vw, 4rem);
+            }
+
+            .qr-card {
+                padding: 2rem;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .qr-card {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+        <div class="left-section">
+            <h1>Create Together</h1>
+            <p class="description">
+                Every leader contributes one word. Together, we'll create a unique AI-generated song that captures our
+                collective vision.
+            </p>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="wordCount">0</div>
+                    <div class="stat-label">Words Collected</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="participantCount">0</div>
+                    <div class="stat-label">Participants</div>
+                </div>
+            </div>
+
+            <div class="words-preview" id="wordsPreview">
+                <!-- Words will appear here -->
+                <div style="text-align: center; color: rgba(255,255,255,0.3);">Waiting for words...</div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <p class="scan-text">Scan to contribute your word</p>
+            <div class="qr-card">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusic.netlify.app/word-submit.html&color=000000"
+                    alt="Scan to Submit" style="width: 100%; height: 100%; object-fit: contain; padding: 20px;">
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Real-time updates
+        function updateDisplay() {
+            fetch('https://ai-music-backend-g0d9.onrender.com/api/words')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('wordCount').textContent = data.words.length;
+                    document.getElementById('participantCount').textContent = data.words.length;
+
+                    const preview = document.getElementById('wordsPreview');
+                    if (data.words.length > 0) {
+                        preview.innerHTML = data.words.map(word =>
+                            `<span class="word-tag">${word}</span>`
+                        ).join('');
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        setInterval(updateDisplay, 2000);
+        updateDisplay();
+    </script>
+</body>
+
+</html>

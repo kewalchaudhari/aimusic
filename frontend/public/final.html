@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JioAI Music - Birthday Celebration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#000000',
+            foreground: '#ffffff',
+            card: 'rgba(255, 255, 255, 0.05)',
+            'card-foreground': '#ffffff',
+            primary: '#6366f1', // Indigo
+            'primary-foreground': '#ffffff',
+            secondary: 'rgba(255, 255, 255, 0.1)',
+            'secondary-foreground': '#e2e8f0',
+            accent: '#a855f7', // Purple
+            muted: 'rgba(255, 255, 255, 0.05)',
+            'muted-foreground': '#94a3b8',
+            border: 'rgba(255, 255, 255, 0.1)',
+          },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            body: ['Outfit', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #000000;
+      color: white;
+      min-height: 100vh;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .blob-1 {
+      top: -10%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: #4f46e5;
+      animation: blob 25s infinite alternate;
+    }
+
+    .blob-2 {
+      bottom: -10%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: #db2777;
+      animation: blob 25s infinite alternate-reverse;
+    }
+
+    .blob-3 {
+      top: 40%;
+      left: 40%;
+      width: 400px;
+      height: 400px;
+      background: #005AAC;
+      opacity: 0.2;
+      animation: blob 30s infinite alternate;
+    }
+
+    @keyframes blob {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(30px, 30px) scale(1.1);
+      }
+    }
+
+    .glass-card {
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .word-cloud-word {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      margin: 0.25rem;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .word-cloud-word:nth-child(odd) {
+      animation-delay: -1.5s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+      }
+    }
+
+    .qr-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes soundwave {
+
+      0%,
+      100% {
+        transform: scaleY(0.3);
+      }
+
+      50% {
+        transform: scaleY(1);
+      }
+    }
+
+    .soundwave-bar {
+      animation: soundwave 0.8s ease-in-out infinite;
+    }
+
+    .soundwave-bar:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .soundwave-bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .soundwave-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .soundwave-bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .soundwave-bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .soundwave-bar:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    .soundwave-bar:nth-child(7) {
+      animation-delay: 0.6s;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+    }
+
+    @keyframes bg-glow-pulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    .bg-glowing-effect {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.6), rgba(168, 85, 247, 0.4), rgba(79, 70, 229, 0.2) 80%, rgba(0, 0, 0, 0) 100%);
+      pointer-events: none;
+      z-index: 0;
+      animation: bg-glow-pulse 4s ease-in-out infinite alternate;
+    }
+
+    /* Custom Scrollbar for Playlist */
+    .playlist-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .playlist-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .playlist-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .playlist-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white relative">
+  <!-- Background Blobs -->
+  <div class="bg-glowing-effect"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Main Container -->
+  <div class="min-h-screen w-full p-4 lg:p-6 flex flex-col relative z-10">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row items-center justify-center mb-6 gap-4 md:gap-0">
+      <div class="flex items-center gap-4">
+        <div
+          class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-4xl font-extrabold tracking-wide">JioAI Music</h1>
+          <p class="text-lg text-white/60 font-medium tracking-wider">Birthday Celebration</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content - Responsive Grid Layout -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Section 1: QR Code Scanner -->
+      <section class="col-span-1 lg:col-span-3 flex flex-col">
+        <div class="glass-card rounded-2xl p-6 flex-1 flex flex-col">
+          <div class="text-center mb-4">
+            <h2 class="text-3xl font-bold mb-1 text-white">Scan & Submit</h2>
+            <p class="text-lg text-white/60">Describe Anish Bhai in your words</p>
+          </div>
+
+          <!-- QR Code -->
+          <div class="flex-1 flex items-center justify-center relative pt-8">
+            <div class="qr-glow rounded-2xl p-1 bg-gradient-to-br from-indigo-500 to-purple-500 relative z-10">
+              <div class="bg-white p-4 rounded-xl">
+                <!-- Using the same SVG but keeping it simple for now or Image -->
+                <img
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://jioaimusic.netlify.app/word-submit.html&color=4f46e5"
+                  alt="QR Code" class="w-64 h-64 block">
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="mt-4 pt-4 border-t border-white/10">
+            <div class="flex items-center justify-between">
+              <div class="text-center">
+                <p id="totalResponses" class="text-2xl font-bold text-indigo-400">0</p>
+                <p class="text-xs text-white/50 font-medium uppercase tracking-wide">Responses</p>
+              </div>
+              <div class="h-8 w-px bg-white/10"></div>
+              <div class="text-center">
+                <p id="uniqueWords" class="text-2xl font-bold text-purple-400">0</p>
+                <p class="text-xs text-white/50 font-medium uppercase tracking-wide">Unique Words</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Word Cloud -->
+      <section class="col-span-1 lg:col-span-5 flex flex-col">
+        <div class="glass-card rounded-2xl p-6 flex-1 flex flex-col">
+          <div class="text-center mb-4">
+            <h2 class="text-3xl font-bold mb-1 text-white">Anish Bhai's Superpowers</h2>
+            <p class="text-lg text-white/60">Words from leaders</p>
+          </div>
+
+          <!-- Word Cloud Display -->
+          <div class="flex-1 flex items-center justify-center p-4 pt-10 overflow-hidden relative"
+            id="wordCloudContainer">
+            <div class="text-center leading-loose" id="wordsList">
+              <span class="text-white/50">Waiting for words...</span>
+            </div>
+          </div>
+
+          <!-- Recently Added -->
+
+
+          <!-- Admin Controls -->
+          <div class="mt-4 pt-4 border-t border-white/10 flex gap-3">
+            <button onclick="goToGenerateSong()"
+              class="flex-1 bg-white text-black py-2 px-4 rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 text-sm">
+              <span>🎵</span> Generate
+            </button>
+            <button onclick="toggleSongConfig()"
+              class="bg-white/5 text-white py-2 px-4 rounded-xl font-semibold hover:bg-white/10 transition-colors border border-white/10 flex items-center justify-center gap-2 text-sm">
+              <span>⚙️</span> Advance <span id="configArrow" class="transition-transform duration-300">▼</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: AI Song Generation -->
+      <!-- Section 3: AI Song Generation -->
+      <section class="col-span-1 lg:col-span-4 flex flex-col">
+        <div class="glass-card rounded-2xl p-6 flex-1 flex flex-col relative" id="songCard">
+
+          <!-- Loading Overlay -->
+          <div id="songLoading"
+            class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 rounded-2xl flex flex-col items-center justify-center hidden">
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-white font-bold animate-pulse">Creating Magic...</p>
+            <p class="text-white/60 text-sm mt-2" id="loadingStatus">Initializing...</p>
+          </div>
+
+          <!-- Error Overlay -->
+          <div id="songError"
+            class="absolute inset-0 bg-black/80 backdrop-blur-md z-50 rounded-2xl flex flex-col items-center justify-center hidden p-6 text-center">
+            <div
+              class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+              <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2" id="errorTitle">Oops!</h3>
+            <p class="text-white/70 mb-6" id="errorMessage">Something went wrong.</p>
+            <button onclick="document.getElementById('songError').classList.add('hidden')"
+              class="px-6 py-2 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-colors">
+              Try Again
+            </button>
+          </div>
+
+          <!-- Header -->
+          <div class="text-center mb-4 flex-shrink-0">
+            <h2 class="text-xl font-bold mb-1 text-white">Anish Shah's Song</h2>
+            <p class="text-sm text-white/60">Powered by your words</p>
+          </div>
+
+          <!-- Content Switcher -->
+          <div id="playerContent" class="flex-1 flex flex-col relative overflow-hidden">
+
+            <!-- State 1: Initial Placeholder Player (Static) -->
+            <div id="initialState" class="flex-1 flex flex-col items-center justify-center">
+              <!-- Album Art -->
+              <div class="relative mb-6 group">
+                <div
+                  class="w-48 h-48 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 overflow-hidden shadow-2xl relative">
+                  <div class="absolute inset-0 bg-black/10"></div>
+                  <div class="w-full h-full flex items-center justify-center relative z-10">
+                    <svg class="w-20 h-20 text-white/90 drop-shadow-md" fill="none" stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 mt-4 text-center">Your Song Awaits</h3>
+                <p class="text-white/50 text-sm max-w-[200px] text-center mx-auto">Click Generate to create a
+                  masterpiece from the collected words.</p>
+              </div>
+            </div>
+
+            <!-- State 2: Generated Songs List (Hidden Initially) -->
+            <div id="generatedSongsList"
+              class="hidden flex-1 flex flex-col gap-4 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+              <!-- Songs will be injected here via JS -->
+            </div>
+          </div>
+
+          <!-- Footer Actions (Removed as per request) -->
+
+
+          <!-- Action Buttons -->
+
+        </div>
+      </section>
+      </section>
+
+      <!-- Section 4: Song Configuration (Hidden) -->
+      <section class="col-span-1 lg:col-span-12 hidden" id="songConfigCard">
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+          <!-- Blobs for internal depth -->
+          <div
+            class="absolute top-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none -mr-32 -mt-32">
+          </div>
+
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>⚙️</span> Create Personalized Song
+            </h2>
+            <button onclick="clearAllWords()"
+              class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold uppercase tracking-wider rounded-lg border border-red-500/20 transition-all flex items-center gap-2">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Clear All
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Person Name</label>
+                <input type="text" id="personName" placeholder="e.g., Anish Bhai" value="Anish Bhai"
+                  class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all font-medium">
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Occasion</label>
+                <input type="text" id="occasion" placeholder="e.g. Birthday Celebration" value="Birthday Celebration"
+                  class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all font-medium">
+              </div>
+            </div>
+          </div>
+
+          <!-- Prompt Preview -->
+          <div class="mt-8 pt-6 border-t border-white/10">
+            <label class="block text-xs font-bold text-white/60 uppercase tracking-widest mb-2">Prompt Preview</label>
+            <div id="promptPreview"
+              class="bg-black/20 rounded-xl p-4 text-white/80 font-mono text-sm leading-relaxed border border-white/5 min-h-[80px]">
+              Waiting for words...
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+
+  </div>
+  <script>
+    const API_BASE = 'https://ai-music-backend-g0d9.onrender.com'; // Adjust if needed
+    let currentWords = [];
+    let pollingInterval;
+    const wordsListEl = document.getElementById('wordsList');
+    const totalResponsesEl = document.getElementById('totalResponses');
+    const uniqueWordsEl = document.getElementById('uniqueWords');
+
+    // Styles for dynamic bubbles
+    const bubbleStyles = [
+      "text-4xl font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
+      "text-2xl font-medium text-purple-300 bg-purple-500/10 border border-purple-500/20",
+      "text-3xl font-semibold text-white bg-white/5 border border-white/10",
+      "text-xl text-indigo-200 bg-indigo-500/5 border border-indigo-500/10",
+      "text-4xl font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20",
+      "text-2xl font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20",
+      "text-xl text-white/70 bg-white/5",
+      "text-3xl font-semibold text-white bg-white/5 border border-white/10"
+    ];
+
+
+
+    let rawWords = []; // To store raw API response for comparison
+
+    async function fetchWords() {
+      try {
+        const response = await fetch(`${API_BASE}/api/words`);
+        const data = await response.json();
+        const newWords = data.words || [];
+
+        // Compare new API data with our stored raw data
+        if (JSON.stringify(newWords) !== JSON.stringify(rawWords)) {
+          rawWords = newWords; // Update stored raw data
+          currentWords = [...newWords].reverse(); // Create reversed copy for display
+          updateUI();
+        }
+      } catch (error) {
+        console.error('Error fetching words:', error);
+      }
+    }
+
+    function updateUI() {
+      if (currentWords.length === 0) {
+        wordsListEl.innerHTML = '<span class="text-white/50">Waiting for words...</span>';
+        updateStats(0, 0);
+        return;
+      }
+
+      // 1. Calculate Frequency
+      const frequencyMap = {};
+      currentWords.forEach(word => {
+        const normalized = word.trim().toLowerCase();
+        if (normalized) {
+          // Store original casing of first occurrence or just capitalize
+          const key = normalized;
+          frequencyMap[key] = (frequencyMap[key] || 0) + 1;
+        }
+      });
+
+      const uniqueWords = Object.keys(frequencyMap);
+      updateStats(currentWords.length, uniqueWords.length);
+
+      // 2. Determine Scale
+      // Find min and max frequency to normalize sizes
+      let maxFreq = 0;
+      let minFreq = Infinity;
+
+      uniqueWords.forEach(w => {
+        const count = frequencyMap[w];
+        if (count > maxFreq) maxFreq = count;
+        if (count < minFreq) minFreq = count;
+      });
+
+      // Base sizes in rem
+      const minSize = 1.0;
+      const maxSize = 3.5;
+
+      // 3. Render Cloud
+      // Render all unique words
+      const cloudHTML = uniqueWords.map((key, index) => {
+        const count = frequencyMap[key];
+        const originalText = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize display
+
+        // Calculate size: Linear interpolation
+        let size = minSize;
+        if (maxFreq > minFreq) {
+          size = minSize + ((count - minFreq) / (maxFreq - minFreq)) * (maxSize - minSize);
+        } else {
+          size = (minSize + maxSize) / 2;
+        }
+
+        const styleClass = bubbleStyles[index % bubbleStyles.length];
+
+        return `<span class="word-cloud-word ${styleClass}" style="font-size: ${size.toFixed(2)}rem;">${originalText}</span>`;
+      }).join('');
+
+      wordsListEl.innerHTML = cloudHTML;
+
+      // 4. Update Recently Added (Top 3 from raw list)
+      // currentWords is reversed (newest first)
+
+    }
+
+    function updateStats(total, unique) {
+      if (totalResponsesEl) totalResponsesEl.textContent = total;
+      if (uniqueWordsEl) uniqueWordsEl.textContent = unique;
+    }
+
+    // Initial Load
+    fetchWords();
+
+    // Poll every 2 seconds
+    setInterval(fetchWords, 2000);
+
+
+    // --- New Functionalities ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Setup input listeners for dynamic prompt preview
+      const personNameInput = document.getElementById('personName');
+      const occasionInput = document.getElementById('occasion');
+
+      if (personNameInput) personNameInput.addEventListener('input', updatePromptPreview);
+      if (occasionInput) occasionInput.addEventListener('input', updatePromptPreview);
+    });
+
+    function generatePromptText() {
+      if (currentWords.length === 0) return null;
+
+      const personNameInput = document.getElementById('personName');
+      const occasionInput = document.getElementById('occasion');
+
+      const personName = personNameInput ? personNameInput.value.trim() : '';
+      const occasion = occasionInput ? occasionInput.value.trim() : '';
+
+      // Calculate frequency
+      const frequency = {};
+      currentWords.forEach(word => {
+        const normalized = word.toLowerCase();
+        frequency[normalized] = (frequency[normalized] || 0) + 1;
+      });
+
+      // Sort by frequency
+      let sortedUniqueWords = Object.entries(frequency)
+        .sort((a, b) => b[1] - a[1])
+        .map(([word]) => word.charAt(0).toUpperCase() + word.slice(1));
+
+      // Take top 15 for prompt
+      const topWords = sortedUniqueWords.slice(0, 15).join(', ');
+
+      let text = "";
+      if (!personName && !occasion) {
+        text = `Create a song for a person. Their qualities are: ${topWords}`;
+      } else if (!personName) {
+        text = `Create a song for ${occasion}. Their qualities are: ${topWords}`;
+      } else if (!occasion) {
+        text = `Create a song for ${personName}. Their qualities are: ${topWords}`;
+      } else {
+        text = `Create a song for ${personName} for their ${occasion}. Their qualities are: ${topWords}`;
+      }
+      return text;
+    }
+
+    function updatePromptPreview() {
+      const promptPreview = document.getElementById('promptPreview');
+      if (!promptPreview) return;
+
+      const text = generatePromptText();
+
+      if (!text) {
+        promptPreview.textContent = 'Waiting for words...';
+        return;
+      }
+
+      promptPreview.textContent = text;
+    }
+
+    function toggleSongConfig() {
+      const card = document.getElementById('songConfigCard');
+      const arrow = document.getElementById('configArrow');
+
+      if (card.classList.contains('hidden')) {
+        card.classList.remove('hidden');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+        // Smooth scroll to it
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+        updatePromptPreview(); // Update on open
+      } else {
+        card.classList.add('hidden');
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    async function goToGenerateSong() {
+      const prompt = generatePromptText();
+
+      if (!prompt) {
+        alert('No words collected yet! Please collect some words first.');
+        return;
+      }
+
+      // Show Loading / Hide Previous Errors
+      const loadingEl = document.getElementById('songLoading');
+      const errorEl = document.getElementById('songError');
+      if (loadingEl) loadingEl.classList.remove('hidden');
+      if (errorEl) errorEl.classList.add('hidden');
+
+      // Prepare payload
+      const payload = {
+        customMode: false,
+        instrumental: false,
+        model: 'V5',
+        prompt: prompt
+      };
+
+      try {
+        const response = await fetch(`${API_BASE}/api/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        // Check for HTTP errors OR application-level errors
+        if (!response.ok || data.error || data.detail || (data.status === 'error')) {
+          const errorMessage = data.detail || data.message || data.error || 'Generation failed';
+          throw new Error(errorMessage);
+        }
+
+        // Check multiple levels for taskId based on observed API response structure
+        const taskId = data.data?.data?.taskId || data.data?.taskId || data.taskId || data.id || null;
+
+        if (taskId) {
+          document.getElementById('loadingStatus').textContent = "Generating your track...";
+          startPolling(taskId);
+        } else {
+          console.error("Full Response Data:", data);
+
+          // Check for specific error messages in the nested data structure
+          const specificError = data.data?.msg || data.data?.message || data.msg || data.message;
+          if (specificError && (specificError.toLowerCase().includes('insufficient') || specificError.toLowerCase().includes('credit'))) {
+            throw new Error(specificError);
+          }
+
+          throw new Error("Received successful response but no Task ID was found.");
+        }
+      } catch (err) {
+        console.error("Generation error:", err);
+
+        // Hide loading
+        if (loadingEl) loadingEl.classList.add('hidden');
+
+        // Show Error Overlay
+        if (errorEl) {
+          const errorTitle = document.getElementById('errorTitle');
+          const errorMessageEl = document.getElementById('errorMessage');
+          const msg = err.message.toLowerCase();
+
+          if (msg.includes('credit') || msg.includes('insufficient')) {
+            errorTitle.textContent = "Insufficient Credits";
+            // Display the exact message from the API as requested
+            errorMessageEl.textContent = err.message;
+          } else {
+            errorTitle.textContent = "Generation Failed";
+            errorMessageEl.textContent = err.message || "An unexpected error occurred.";
+          }
+
+          errorEl.classList.remove('hidden');
+        } else {
+          alert("Error generating song: " + err.message);
+        }
+      }
+    }
+
+    function clearAllWords() {
+      if (!confirm('Are you sure you want to clear ALL collected words? This cannot be undone.')) {
+        return;
+      }
+
+      fetch(`${API_BASE}/api/words`, {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            // Reset local state
+            currentWords = [];
+            rawWords = [];
+
+            // Force UI update
+            updateUI();
+            updatePromptPreview();
+
+            // Show feedback
+            const btn = document.querySelector('button[onclick="clearAllWords()"]');
+            if (btn) {
+              const originalText = btn.innerHTML;
+              btn.innerHTML = `
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Cleared!
+              `;
+              setTimeout(() => {
+                btn.innerHTML = originalText;
+              }, 2000);
+            }
+          }
+        })
+        .catch(err => console.error('Error clearing words:', err));
+    }
+
+    function startPolling(taskId) {
+      if (pollingInterval) clearInterval(pollingInterval);
+
+      pollingInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/status/${taskId}`);
+          const data = await res.json();
+
+          if (data.status === 'success' && data.data) {
+            const task = data.data;
+
+            // Update loading status if still running
+            if (task.status !== 'SUCCESS' && task.status !== 'FAILED') {
+              const statusText = task.status.replace(/_/g, ' ');
+              document.getElementById('loadingStatus').textContent = statusText;
+            }
+
+            if (task.status === 'SUCCESS' || task.status === 'FIRST_SUCCESS') {
+              const songs = task.sunoData || task.response?.sunoData || [];
+
+              // Find ALL complete songs
+              const completeSongs = songs.filter(s => s.status === 'complete' || s.audio_url);
+
+              if (completeSongs.length > 0) {
+                // Stop polling and Update UI
+                clearInterval(pollingInterval);
+                updateSongListHelper(completeSongs);
+                // Enable Generate Button again
+                const btn = document.getElementById('generateBtn');
+                if (btn) {
+                  btn.disabled = false;
+                  btn.style.opacity = '1';
+                  btn.style.cursor = 'pointer';
+                }
+              }
+            } else if (task.status === 'FAILED') {
+              clearInterval(pollingInterval);
+              // Show Error Overlay logic...
+              // (keeping existing error handling logic basically same but enabling button)
+              const loadingEl = document.getElementById('songLoading');
+              const errorEl = document.getElementById('songError');
+              if (loadingEl) loadingEl.classList.add('hidden');
+
+              const btn = document.getElementById('generateBtn');
+              if (btn) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+              }
+
+              if (errorEl) {
+                const errorTitle = document.getElementById('errorTitle');
+                const errorMessageEl = document.getElementById('errorMessage');
+                const msg = (task.error_message || task.errorMessage || 'Unknown error').toLowerCase();
+
+                if (msg.includes('credit') || msg.includes('insufficient') || msg.includes('quota')) {
+                  errorTitle.textContent = "Insufficient Credits";
+                  errorMessageEl.textContent = "You don't have enough credits to generate this song. Please top up your account.";
+                } else {
+                  errorTitle.textContent = "Generation Failed";
+                  errorMessageEl.textContent = task.error_message || task.errorMessage || "Song generation failed on server.";
+                }
+                errorEl.classList.remove('hidden');
+              } else {
+                alert('Song generation failed: ' + (task.error_message || "Unknown error"));
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Polling error", e);
+        }
+      }, 3000);
+    }
+
+    function updateSongListHelper(songs) {
+      // Hide loading
+      document.getElementById('songLoading').classList.add('hidden');
+
+      // Hide Initial State
+      document.getElementById('initialState').classList.add('hidden');
+
+      // Show List Container
+      const listContainer = document.getElementById('generatedSongsList');
+      listContainer.classList.remove('hidden');
+
+      // Append new songs to top
+      songs.forEach(song => {
+        const cardHTML = createSongCard(song);
+        listContainer.insertAdjacentHTML('afterbegin', cardHTML);
+      });
+    }
+
+    function createSongCard(song) {
+      const title = song.title || "Untitled Song";
+      const tags = song.tags || "Custom Song";
+      const image = song.image_url || song.imageUrl;
+      const audio = song.audio_url || song.audioUrl;
+      const id = song.id || Math.random().toString(36).substr(2, 9);
+
+      return `
+        <div class="glass-card p-4 rounded-xl flex items-center gap-4 bg-white/5 border border-white/5 transition-all hover:bg-white/10 relative group">
+            <!-- Art -->
+            <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex-shrink-0 overflow-hidden relative border border-white/10">
+                ${image ? `<img src="${image}" class="w-full h-full object-cover">` :
+          `<div class="w-full h-full flex items-center justify-center text-white/20"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg></div>`}
+                <!-- Play Overlay -->
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="toggleCardPlay(this, '${audio}')">
+                   <svg class="w-8 h-8 text-white play-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                   <svg class="w-8 h-8 text-white pause-icon hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                </div>
+            </div>
+            
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-white text-sm truncate mb-0.5">${title}</h4>
+                <p class="text-xs text-white/50 truncate">${tags}</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex items-center gap-2">
+                <a href="${audio}" download target="_blank" class="p-2 hover:bg-white/10 rounded-lg text-white/60 hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                </a>
+            </div>
+        </div>
+        `;
+    }
+
+    // Global active audio to ensure one plays at a time
+    let activeAudio = null;
+    let activeBtn = null;
+
+    function toggleCardPlay(btnContainer, url) {
+      if (!url) return;
+
+      const playIcon = btnContainer.querySelector('.play-icon');
+      const pauseIcon = btnContainer.querySelector('.pause-icon');
+
+      // Create audio if strictly needed or manage global one
+      if (activeAudio && activeAudio.src === url) {
+        if (activeAudio.paused) {
+          activeAudio.play();
+          playIcon.classList.add('hidden');
+          pauseIcon.classList.remove('hidden');
+        } else {
+          activeAudio.pause();
+          playIcon.classList.remove('hidden');
+          pauseIcon.classList.add('hidden');
+        }
+      } else {
+        if (activeAudio) {
+          activeAudio.pause();
+          // Reset previous button
+          if (activeBtn) {
+            const prevPlay = activeBtn.querySelector('.play-icon');
+            const prevPause = activeBtn.querySelector('.pause-icon');
+            if (prevPlay) prevPlay.classList.remove('hidden');
+            if (prevPause) prevPause.classList.add('hidden');
+          }
+        }
+
+        activeAudio = new Audio(url);
+        activeBtn = btnContainer;
+
+        activeAudio.play();
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+
+        activeAudio.onended = () => {
+          playIcon.classList.remove('hidden');
+          pauseIcon.classList.add('hidden');
+          activeAudio = null;
+        };
+      }
+    }
+
+    // Hook updatePromptPreview into updateUI to keep it live
+    const originalUpdateUI = updateUI;
+    updateUI = function () {
+      originalUpdateUI();
+      updatePromptPreview();
+    }
+
+  </script>
+</body>
+
+</html>
